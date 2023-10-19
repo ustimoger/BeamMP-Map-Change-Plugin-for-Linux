@@ -24,14 +24,9 @@ end
 
 function ExecCommand(commPass, boo)
     local command = "/BeamNGEdit {r}"
-    if not boo then 
-        command = "screen -d -m" + command  
-    end 
+   
         command  = command:gsub('{r}',commPass)
-        if not boo then 
-        os.execute(command)
-        end 
-if boo then Mscount = 0 end 
+      if boo then Mscount = 0 end 
         for line in os.capture(command, true):gmatch("[^\r\n]+") do 
         MP.SendChatMessage(-1, line )
        if boo then  Mscount = Mscount+1 end 
