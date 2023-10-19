@@ -95,6 +95,7 @@ acout+= "\n";
     }
     let mut output = File::create(path)?;
     write!(output,"{}", acout )?;
+    reboot(curr_path);
     Ok(())
    
     

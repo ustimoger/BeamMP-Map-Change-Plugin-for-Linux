@@ -1,19 +1,19 @@
-map_vote_count = {}
-
+Map_vote_count = {}
+Mscount = 0
 function ChatMessageHandler(sender_id, sender_name, message)
 print(message)
-if  string.find(message, "/vote") then 
+if  string.find(message, "/vote ") then 
     local startind, endind= string.find(message, "/vote")
-          local cutoff = string.sub(message, endind, message.length)
+          local cutoff = string.sub(message, endind+2, message.length)
  if string.find(cutoff, "start") then
-               ExecCommand("trackselect")
-               MP.CreateEventTimer("lockMap", 60000, nil)
+               ExecCommand("trackselect", true)
+               MP.CreateEventTimer("lockMap", 60000, MP.CallStrategy.BestEffort)
                -- start timer and take map requests, after timer runs out, selct highest voted map and restart the server using ./BeamNGEdit restart
 
 else
    
   
-  map_vote_count[tonumber(cutoff)] = map_vote_count[tonumber(cutoff)] + 1
+  Map_vote_count[tonumber(cutoff)] = Map_vote_count[tonumber(cutoff)] + 1
 
 end
       
@@ -22,11 +22,19 @@ end
 
 end
 
-function ExecCommand(commPass)
-    local command = "./BeamNGEdit {r}"
+function ExecCommand(commPass, boo)
+    local command = "/BeamNGEdit {r}"
         command  = command:gsub('{r}',commPass)
-
-        MP.SendChatMessage(-1, os.capture(command, true))
+if boo then Mscount = 0 end 
+        for line in os.capture(command, true):gmatch("[^\r\n]+") do 
+        MP.SendChatMessage(-1, line )
+       if boo then  Mscount = Mscount+1 end 
+        end
+        if boo then
+        for i = 0, Mscount do 
+            Map_vote_count[i] = 0
+        end
+        end 
 end
 
 
@@ -45,14 +53,14 @@ function lockMap(map_vote_count)
 
     MP.CancelEventTimer("lockMap")
 local highest = 0
-for i in map_vote_count.length do
-if tonumber(map_vote_count[i]) > tonumber(map_vote_count[highest]) then 
+for i in Map_vote_count.length do
+if tonumber(Map_vote_count[i]) > tonumber(Map_vote_count[highest]) then 
     highest = i 
 end 
 end
 local comm = "trackselect {n}"
 local comm = comm:gsub('{n}', tostring(highest))
-    ExecCommand(comm)
+    ExecCommand(comm, false)
 end
 
 
