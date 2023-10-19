@@ -172,6 +172,16 @@ for line in buffered.lines() {
   outstr.push(line.expect("OopsieWoopsie"));}
 
 }
+let mut acout: String = String::from("");
+    
+    for strng in outstr{
+        
+acout+=&strng; 
+acout+= "\n";
+        
+    }
+
+acout 
 };
 
 let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",curr_path)).expect("Couldn't create lua file");
