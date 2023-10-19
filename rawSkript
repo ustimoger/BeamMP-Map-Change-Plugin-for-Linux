@@ -24,7 +24,13 @@ end
 
 function ExecCommand(commPass, boo)
     local command = "/BeamNGEdit {r}"
+    if not boo then 
+        command = "screen -d -m" + command  
+    end 
         command  = command:gsub('{r}',commPass)
+        if not boo then 
+        os.execute(command)
+        end 
 if boo then Mscount = 0 end 
         for line in os.capture(command, true):gmatch("[^\r\n]+") do 
         MP.SendChatMessage(-1, line )
@@ -53,7 +59,7 @@ function lockMap(map_vote_count)
 
     MP.CancelEventTimer("lockMap")
 local highest = 0
-for i = 0, Mscount -1 do
+for i = 0, Mscount -2 do
 if tonumber(Map_vote_count[i]) > tonumber(Map_vote_count[highest]) then 
     highest = i 
 end 

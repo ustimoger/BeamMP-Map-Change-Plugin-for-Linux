@@ -167,7 +167,7 @@ let mut outstr: Vec<String> = Vec::new();
 let mut inte : u8 = 1; 
 for line in buffered.lines() {
     if  inte == 26{
-        outstr.push(   format!( "local command = {0}{1}{2}",r#"""#, curr_path, r#"/BeamNGEdit {r}""#)); //extremely ugly but does the job
+        outstr.push(   format!( "local command = {0}screen -d -m {1}{2}",r#"""#, curr_path, r#"/BeamNGEdit {r}""#)); //extremely ugly but does the job , screen has to be terminated after usage 
 
     }else{
   outstr.push(line.expect("OopsieWoopsie"));}
