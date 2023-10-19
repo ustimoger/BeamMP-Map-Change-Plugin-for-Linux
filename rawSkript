@@ -31,7 +31,7 @@ if boo then Mscount = 0 end
        if boo then  Mscount = Mscount+1 end 
         end
         if boo then
-        for i = 0, Mscount do 
+        for i = 0, Mscount -2 do 
             Map_vote_count[i] = 0
         end
         end 
@@ -53,7 +53,7 @@ function lockMap(map_vote_count)
 
     MP.CancelEventTimer("lockMap")
 local highest = 0
-for i in Map_vote_count.length do
+for i = 0, Mscount -1 do
 if tonumber(Map_vote_count[i]) > tonumber(Map_vote_count[highest]) then 
     highest = i 
 end 
