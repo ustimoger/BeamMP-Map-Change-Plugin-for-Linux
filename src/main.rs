@@ -9,12 +9,12 @@ fn main() {
 let path = match env::current_dir(){
     Ok(exe_path) => 
     exe_path.display().to_string(),
-Err(e) => panic!("Could not get Path"),
+Err(_) => panic!("Could not get Path"),
 
 };
 
 
-let arguments:[&str;4] =["help","trackselect","reboot","install"]; 
+let arguments:[&str;5] =["help","trackselect","reboot","install", "init"]; 
 let mut tracks: Vec<String> = Vec::new();
 init_tracks(& mut tracks, &path);
     let args: Vec<_> = env::args().collect();
@@ -35,6 +35,7 @@ for strng in tracks{
 },
 "reboot" => reboot(&path) ,
 "install" => if args.len() < 3 {println!("Usage: install 'link here' ");} else if args.len() == 3{install(&args[2], &path);}, 
+    "init" => init(&path),
     _ =>  println!("Valid arguments are: {:?} \n You entered: {}", arguments, &args[1]),
 
 }
@@ -154,5 +155,11 @@ if result != ""&& !ret.contains(&String::from(result)){
 
 ret
 }
+fn init(path : &str){
+let lua_script =&format!("");
+let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",path)).expect("Couldn't create lua file");
+write!(write, "{}", lua_script).expect("Writing to lua file went wrong");
+let mut write = File::create(format!("{}/BeamMPStart.sh", path)).expect("Couldn't create Start file.");
+write!(write , "cd {} \n ./BeamMP-for-your-distro-.22.04", path).expect("Couldn't Write to StartSkript file");
 
-
+}
