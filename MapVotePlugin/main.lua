@@ -4,7 +4,7 @@ print(message)
 if  string.find(message, "/vote") then 
     local startind, endind= string.find(message, "/vote")
           local cutoff = string.sub(message, endind, message.length)
-          if string.find(cutoff, "start") then
+ if string.find(cutoff, "start") then
                ExecCommand("trackselect")
                -- start timer and take map requests, after timer runs out, selct highest voted map and restart the server using ./BeamNGEdit restart
 end 
