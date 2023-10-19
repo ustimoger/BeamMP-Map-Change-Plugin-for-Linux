@@ -14,7 +14,7 @@ Err(_) => panic!("Could not get Path"),
 };
 
 
-let arguments:[&str;5] =["help","trackselect","reboot","install", "init"]; 
+let arguments:[&str;6] =["help","trackselect","reboot","install", "init", "start"]; 
 let mut tracks: Vec<String> = Vec::new();
 init_tracks(& mut tracks, &path);
     let args: Vec<_> = env::args().collect();
@@ -22,7 +22,7 @@ init_tracks(& mut tracks, &path);
 let strng: &str = &args[1];
 match strng {
 
-"help" => println!("help: shows this menu, trackselect: use this to select a track, reboot: reboots the server, install: installs the given mod"),
+"help" => println!("help: shows this menu, trackselect: use this to select a track, reboot: reboots the server, install: installs the given mod, init: initializes the plugin and start skript(only run once), start: starts the server in screen session if off."),
 "trackselect" => if args.len() == 2 {println!("Choose one of the following tracks: ");
 let mut counter: u32 = 0; 
 for strng in tracks{
@@ -36,6 +36,7 @@ for strng in tracks{
 "reboot" => reboot(&path) ,
 "install" => if args.len() < 3 {println!("Usage: install 'link here' ");} else if args.len() == 3{install(&args[2], &path);}, 
     "init" => init(&path),
+    "start" => start_server(&path),
     _ =>  println!("Valid arguments are: {:?} \n You entered: {}", arguments, &args[1]),
 
 }
@@ -63,14 +64,14 @@ fn reboot(curr_path: &str){
         .arg("-d")
         .arg("-m")
         .arg("sh")
-        .arg(format!("{curr_path}/BeamMPStart.sh")) //todo: change before uploading
+        .arg(format!("{}/BeamMPStart.sh", curr_path)) //todo: change before uploading
         .spawn()
         .expect("Command Failed, idk why tho");
 }
 
 fn trackselect(ag: &str, tracks: Vec<String>, curr_path: &str) -> Result<(), Error>  {
 
-    let path = &format!("{curr_path}/ServerConfig.toml"); 
+    let path = &format!("{}/ServerConfig.toml", curr_path); 
 
   
 
@@ -115,7 +116,7 @@ fn init_tracks(trackstor: & mut Vec<String>,curr_path :&str ){
 
     }
     
-    let paths = std::fs::read_dir(format!("{curr_path}/Resources/Client")).unwrap();
+    let paths = std::fs::read_dir(format!("{}/Resources/Client", curr_path)).unwrap();
 
     for path in paths {
          for strng in zip_helper( &path.unwrap().path().display().to_string()){
@@ -126,7 +127,7 @@ fn init_tracks(trackstor: & mut Vec<String>,curr_path :&str ){
 }
 fn install( link : &str, curr_path: &str ){
 
-Command:: new("wget").arg("-P").arg(format!("{curr_path}/Resources/Client")).arg(link).spawn().expect("Something went Wrong with the download");
+Command:: new("wget").arg("-P").arg(format!("{}/Resources/Client", curr_path)).arg(link).spawn().expect("Something went Wrong with the download");
 
 
 
@@ -162,4 +163,15 @@ write!(write, "{}", lua_script).expect("Writing to lua file went wrong");
 let mut write = File::create(format!("{}/BeamMPStart.sh", path)).expect("Couldn't create Start file.");
 write!(write , "cd {} \n ./BeamMP-for-your-distro-.22.04", path).expect("Couldn't Write to StartSkript file");
 
+}
+fn start_server(curr_path: &str){
+    Command::new("screen")
+    .arg("-S")
+    .arg("BeamMP")
+    .arg("-d")
+    .arg("-m")
+    .arg("sh")
+    .arg(format!("{}/BeamMPStart.sh", curr_path)) //todo: change before uploading
+    .spawn()
+    .expect("Command Failed, idk why tho");
 }
