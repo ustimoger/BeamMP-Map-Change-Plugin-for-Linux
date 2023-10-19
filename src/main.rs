@@ -156,12 +156,28 @@ if result != ""&& !ret.contains(&String::from(result)){
 
 ret
 }
-fn init(path : &str){
-let lua_script =&format!("");
-let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",path)).expect("Couldn't create lua file");
+fn init(curr_path : &str){
+    
+let lua_script = {
+    let path = &format!("{}/rawSkript", curr_path); 
+let input = File::open(path)?;
+let buffered = BufReader::new(input);
+let mut outstr: Vec<String> = Vec::new();
+
+for line in buffered.lines() {
+    if line == 26{
+        outstr.push(    "local command = {0}{1}", curr_path, r#""./BeamNGEdit {r}""#); //extremely ugly but does the job
+
+    }else{
+  outstr.push(line.expect("OopsieWoopsie"));}
+
+}
+};
+
+let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",curr_path)).expect("Couldn't create lua file");
 write!(write, "{}", lua_script).expect("Writing to lua file went wrong");
-let mut write = File::create(format!("{}/BeamMPStart.sh", path)).expect("Couldn't create Start file.");
-write!(write , "cd {} \n ./BeamMP-for-your-distro-.22.04", path).expect("Couldn't Write to StartSkript file");
+let mut write = File::create(format!("{}/BeamMPStart.sh", curr_path)).expect("Couldn't create Start file.");
+write!(write , "cd {} \n ./BeamMP-for-your-distro-.22.04", curr_path).expect("Couldn't Write to StartSkript file");
 
 }
 fn start_server(curr_path: &str){
