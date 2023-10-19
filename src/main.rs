@@ -166,7 +166,7 @@ let mut outstr: Vec<String> = Vec::new();
 let mut inte : u8 = 1; 
 for line in buffered.lines() {
     if  inte == 26{
-        outstr.push(   format!( "local command = {0}{1}", curr_path, r#""./BeamNGEdit {r}""#)); //extremely ugly but does the job
+        outstr.push(   format!( "local command = {0}{1}{2}",r#"""#, curr_path, r#"/BeamNGEdit {r}""#)); //extremely ugly but does the job
 
     }else{
   outstr.push(line.expect("OopsieWoopsie"));}
@@ -184,7 +184,7 @@ acout+= "\n";
 acout 
 };
 
-let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",curr_path)).expect("Couldn't create lua file");
+let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",curr_path)).expect("Couldn't create lua file"); //create dict for the plugin
 write!(write, "{}", lua_script).expect("Writing to lua file went wrong");
 let mut write = File::create(format!("{}/BeamMPStart.sh", curr_path)).expect("Couldn't create Start file.");
 write!(write , "cd {} \n ./BeamMP-for-your-distro-.22.04", curr_path).expect("Couldn't Write to StartSkript file");
