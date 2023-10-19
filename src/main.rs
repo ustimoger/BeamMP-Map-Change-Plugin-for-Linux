@@ -160,17 +160,17 @@ fn init(curr_path : &str){
     
 let lua_script = {
     let path = &format!("{}/rawSkript", curr_path); 
-let input = File::open(path)?;
+let input = File::open(path).expect("error finding rawSkript file");
 let buffered = BufReader::new(input);
 let mut outstr: Vec<String> = Vec::new();
-
+let mut inte : u8 = 1; 
 for line in buffered.lines() {
-    if line == 26{
-        outstr.push(    "local command = {0}{1}", curr_path, r#""./BeamNGEdit {r}""#); //extremely ugly but does the job
+    if  inte == 26{
+        outstr.push(   format!( "local command = {0}{1}", curr_path, r#""./BeamNGEdit {r}""#)); //extremely ugly but does the job
 
     }else{
   outstr.push(line.expect("OopsieWoopsie"));}
-
+inte +=1;
 }
 let mut acout: String = String::from("");
     
