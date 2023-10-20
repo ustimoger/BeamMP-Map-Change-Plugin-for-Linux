@@ -51,6 +51,26 @@ for strng in tracks{
 
 
 fn reboot(curr_path: &str){
+  let outp = Command::new("screen").arg("-ls").output().expect("screen -ls didn't work, terminating.");
+ let kprocess = { for line in String::from_utf8_lossy(&outp.stdout).lines(){
+   if line.contains("BeamMP"){
+break; 
+   line
+   }
+
+    }
+    "BeamMP"
+ }    
+    Command::new("screen")
+    .arg("-S")
+    .arg("BeamMP")
+    .arg("-d")
+    .arg("-m")
+    .arg("sh")
+    .arg(format!("{}/BeamMPStart.sh", curr_path)) //todo: change before uploading
+    .spawn()
+    .expect("Command Failed, idk why tho");
+
     Command::new("screen")
         .arg("-XS")
         .arg("BeamMP")
@@ -58,15 +78,6 @@ fn reboot(curr_path: &str){
         .spawn()
         .expect("operation failed, program probably needs to be executed with sudo");
 
-        Command::new("screen")
-        .arg("-S")
-        .arg("BeamMP")
-        .arg("-d")
-        .arg("-m")
-        .arg("sh")
-        .arg(format!("{}/BeamMPStart.sh", curr_path)) //todo: change before uploading
-        .spawn()
-        .expect("Command Failed, idk why tho");
 }
 
 fn trackselect(ag: &str, tracks: Vec<String>, curr_path: &str) -> Result<(), Error>  {
