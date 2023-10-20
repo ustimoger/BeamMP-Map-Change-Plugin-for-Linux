@@ -65,7 +65,7 @@ break;
 
     }
   retval
- }    ;
+ };
     Command::new("screen")
     .arg("-S")
     .arg("BeamMP")
@@ -204,7 +204,7 @@ acout
 let mut write = File::create(format!("{}/Resources/Server/MapVotePlugin/main.lua",curr_path)).expect("Couldn't create lua file"); //create dict for the plugin
 write!(write, "{}", lua_script).expect("Writing to lua file went wrong");
 let mut write = File::create(format!("{}/BeamMPStart.sh", curr_path)).expect("Couldn't create Start file.");
-write!(write , "cd {} \n sleep(5)\n ./BeamMP-for-your-distro-.22.04", curr_path).expect("Couldn't Write to StartSkript file");
+write!(write , "cd {} \n sleep 5\n ./BeamMP-for-your-distro-.22.04", curr_path).expect("Couldn't Write to StartSkript file");
 
 }
 fn start_server(curr_path: &str){
