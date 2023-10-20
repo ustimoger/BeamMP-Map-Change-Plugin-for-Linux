@@ -177,14 +177,16 @@ fn init(curr_path : &str){
 let lua_script: String = r#"Map_vote_count = {}
 Mscount = 0
 Blacklisted_senders = {}
-VoteCount = 0
+VoteCount = 1
 Seconds = 0
+Vote_has_started = false 
 function ChatMessageHandler(sender_id, sender_name, message)
 print(message)
 if  string.find(message, "/vote ") then 
     local startind, endind= string.find(message, "/vote")
           local cutoff = string.sub(message, endind+2, message.length)
- if string.find(cutoff, "start") then
+ if string.find(cutoff, "start") and not Vote_has_started  then
+Vote_has_started = true 
                ExecCommand("trackselect", true)
                MP.CreateEventTimer("lockMap", 1000, MP.CallStrategy.BestEffort)
                -- start timer and take map requests, after timer runs out, selct highest voted map and restart the server using ./BeamNGEdit restart
@@ -194,10 +196,10 @@ else
   if tonumber(cutoff)~= nil and not has_value(Blacklisted_senders, sender_id) then 
   
     
-    
+    print("A vote has been registered")
   Map_vote_count[tonumber(cutoff)] = Map_vote_count[tonumber(cutoff)] + 1
   Blacklisted_senders[VoteCount] = sender_id
-  VoteCount = VoteCount +1
+  VoteCount = VoteCount + 1
   else 
     if tonumber(cutoff)== nil then
       MP.SendChatMessage(sender_id, "Please enter a proper value" )
@@ -243,8 +245,8 @@ function os.capture(cmd, raw)
 
 function lockMap(map_vote_count)
 
-if Seconds > 45 and Seconds == 30 then 
-  MP.SendChatMessage(-1, "There is ".. Seconds.. " left to vote before Restart." )
+if Seconds > 45 or Seconds == 30 then 
+  MP.SendChatMessage(-1, "There is ".. 61 - Seconds.. " Seconds left to vote before Restart." )
 
 end 
 
