@@ -175,31 +175,74 @@ ret
 }
 fn init(curr_path : &str){
     
-let lua_script = {
-    let path = &format!("{}/rawSkript", curr_path); 
-let input = File::open(path).expect("error finding rawSkript file");
-let buffered = BufReader::new(input);
-let mut outstr: Vec<String> = Vec::new();
-let mut inte : u8 = 1; 
-for line in buffered.lines() {
-    if  inte == 26{
-        outstr.push(   format!( "local command = {0}screen -d -m {1}{2}",r#"""#, curr_path, r#"/BeamNGEdit {r}""#)); //extremely ugly but does the job , screen has to be terminated after usage 
+let lua_script =  format!( "{3}\n local command = {0}{1}{2} \n{4}",r#"""#, curr_path, r#"/BeamNGEdit {r}""#,r#"Map_vote_count = {}
+Mscount = 0
+function ChatMessageHandler(sender_id, sender_name, message)
+print(message)
+if  string.find(message, "/vote ") then 
+    local startind, endind= string.find(message, "/vote")
+          local cutoff = string.sub(message, endind+2, message.length)
+ if string.find(cutoff, "start") then
+               ExecCommand("trackselect", true)
+               MP.CreateEventTimer("lockMap", 60000, MP.CallStrategy.BestEffort)
+               -- start timer and take map requests, after timer runs out, selct highest voted map and restart the server using ./BeamNGEdit restart
 
-    }else{
-  outstr.push(line.expect("OopsieWoopsie"));}
-inte +=1;
-}
-let mut acout: String = String::from("");
-    
-    for strng in outstr{
-        
-acout+=&strng; 
-acout+= "\n";
-        
-    }
+else
+   
+  
+  Map_vote_count[tonumber(cutoff)] = Map_vote_count[tonumber(cutoff)] + 1
 
-acout 
-};
+end
+      
+
+end 
+
+end
+
+function ExecCommand(commPass, boo)"# , r#"
+command  = command:gsub('{r}',commPass)
+if boo then Mscount = 0 end 
+for line in os.capture(command, true):gmatch("[^\r\n]+") do 
+MP.SendChatMessage(-1, line )
+if boo then  Mscount = Mscount+1 end 
+end
+if boo then
+for i = 0, Mscount -2 do 
+    Map_vote_count[i] = 0
+end
+end 
+end
+
+
+function os.capture(cmd, raw)
+local f = assert(io.popen(cmd, 'r'))
+local s = assert(f:read('*a'))
+f:close()
+if raw then return s end
+s = string.gsub(s, '^%s+', '')
+s = string.gsub(s, '%s+$', '')
+s = string.gsub(s, '[\n\r]+', ' ')
+return s
+end
+
+function lockMap(map_vote_count)
+
+MP.CancelEventTimer("lockMap")
+local highest = 0
+for i = 0, Mscount -2 do
+if tonumber(Map_vote_count[i]) > tonumber(Map_vote_count[highest]) then 
+highest = i 
+end 
+end
+local comm = "trackselect {n}"
+local comm = comm:gsub('{n}', tostring(highest))
+ExecCommand(comm, false)
+end
+
+
+
+MP.RegisterEvent("lockMap", "lockMap")
+MP.RegisterEvent("onChatMessage","ChatMessageHandler")"#);
 let pathstr = &format!("{}/Resources/Server/MapVotePlugin/main.lua",curr_path);
 let path = std::path::Path::new(pathstr);
 let prefix = path.parent().unwrap();
