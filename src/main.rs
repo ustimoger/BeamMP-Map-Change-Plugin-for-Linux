@@ -52,15 +52,17 @@ for strng in tracks{
 
 fn reboot(curr_path: &str){
   let outp = Command::new("screen").arg("-ls").output().expect("screen -ls didn't work, terminating.");
- let kprocess = { for line in String::from_utf8_lossy(&outp.stdout).lines(){
+ let kprocess = { 
+    let mut retval:String = String::from("BeamMP"); 
+    for line in String::from_utf8_lossy(&outp.stdout).lines(){
    if line.contains("BeamMP"){
+retval = String::from(line); 
 break; 
-   line
    }
 
     }
-    "BeamMP"
- }    
+  retval
+ }    ;
     Command::new("screen")
     .arg("-S")
     .arg("BeamMP")
@@ -73,7 +75,7 @@ break;
 
     Command::new("screen")
         .arg("-XS")
-        .arg("BeamMP")
+        .arg(&kprocess)
         .arg("quit")
         .spawn()
         .expect("operation failed, program probably needs to be executed with sudo");
