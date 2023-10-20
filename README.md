@@ -1,4 +1,4 @@
-# BeamMP-Commandline-Map-Change-for-Linux
+# BeamMP-Map-Change-Plugin-for-Linux
 
 Command line based Map selector, Mod downloader and Auto Restart tool, and BeamNG plugin for chat based map votes.
 
